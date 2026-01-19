@@ -26,7 +26,7 @@
                 })
                 .then(text => {
                     // 読み込んだ文章を画面に表示
-                    document.getElementById('content').textContent = text;
+                    document.getElementById('content').innerHTML = text;
                 })
                 .catch(error => {
                     document.getElementById('content').textContent = "エラーが発生しました: " + error.message;
@@ -36,4 +36,5 @@
         }
     </script>
 </body>
+
 </html>
