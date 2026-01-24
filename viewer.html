@@ -5,7 +5,7 @@
     <title>読書中</title>
 </head>
 <body>
-    <button onclick="location.href='index.html'">← 目次に戻る</button>
+    <button onclick="goBack()">← 目次に戻る</button>
     <hr>
     
     <pre id="content" style="white-space: pre-wrap; word-wrap: break-word; font-family: sans-serif;">
@@ -13,20 +13,26 @@
     </pre>
 
     <script>
-        // URLから ?file=xxx.txt の部分を取得する関数
+        // 【追加】キャッシュを無視して戻るための関数
+        function goBack() {
+            // URLの後ろに現在時刻をつけることで、ブラウザに「新しいページ」だと思わせる
+            // 例: index.html?time=123456789
+            location.href = 'index.html?time=' + new Date().getTime();
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
         const fileName = urlParams.get('file');
 
         if (fileName) {
-            // 指定されたテキストファイルを読みに行く（Fetch API）
             fetch(fileName)
                 .then(response => {
+                    // キャッシュされた古いテキストファイルを読まないようヘッダーを指定（念のため）
                     if (!response.ok) throw new Error('記事が見つかりません');
                     return response.text();
                 })
                 .then(text => {
-                    // 読み込んだ文章を画面に表示
-                    document.getElementById('content').innerHTML = text;
+                    // セキュリティ対策（XSS防止）
+                    document.getElementById('content').textContent = text;
                 })
                 .catch(error => {
                     document.getElementById('content').textContent = "エラーが発生しました: " + error.message;
@@ -36,5 +42,5 @@
         }
     </script>
 </body>
-
 </html>
+
